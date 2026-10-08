@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>neact</title>
+  <style>
+    body { margin: 0; min-height: 100vh; background: #0c0d10; color: #f4f0e8; font-family: sans-serif; }
+    main { max-width: 36rem; margin: 0 auto; padding: 2rem 1rem; }
+    button { height: 2.75rem; border-radius: 10px; border: 1px solid #9c968c55; background: transparent; color: inherit; padding: 0 1rem; }
+    .accent { background: #e3a15a; color: #0c0d10; border: 0; }
+    form { display: flex; gap: 0.5rem; margin: 1rem 0; }
+    input { flex: 1; height: 2.75rem; border-radius: 10px; border: 1px solid #9c968c55; background: #0c0d10; color: inherit; padding: 0 0.75rem; }
+    li { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.5rem 0; }
+  </style>
+</head>
+<body>
+  <main id="app"></main>
+  <script type="module">
+    import { h, render, useState } from "../src/neact.js";
+    function App() {
+      const [count, setCount] = useState(0);
+      const [text, setText] = useState("");
+      const [items, setItems] = useState([{ id: 1, text: "Ler o reconciler" }]);
+      return h("div", null,
+        h("button", { className: "accent", type: "button", onClick: () => setCount((n) => n + 1) }, "contador " + count),
+        h("form", { onSubmit: (event) => {
+          event.preventDefault();
+          const next = text.trim();
+          if (!next) return;
+          setItems((list) => [...list, { id: Date.now(), text: next }]);
+          setText("");
+        } },
+          h("input", { value: text, placeholder: "Nova tarefa", onInput: (event) => setText(event.target.value) }),
+          h("button", { type: "submit" }, "Adicionar"),
+        ),
+        h("ul", null, items.map((item) => h("li", { key: item.id },
+          h("span", null, item.text),
+          h("button", { type: "button", onClick: () => setItems((list) => list.filter((entry) => entry.id !== item.id)) }, "Remover"),
+        ))),
+      );
+    }
+    render(h(App), document.querySelector("#app"));
+  </script>
+</body>
+</html>
