@@ -207,6 +207,10 @@ function createHost(vnode) {
     applyProps(el, {}, vnode.props);
     return el;
 }
+export function domEventName(name) {
+    const raw = name.slice(2).toLowerCase();
+    return raw === "doubleclick" ? "dblclick" : raw;
+}
 function applyProps(el, prev, next) {
     const names = new Set([...Object.keys(prev), ...Object.keys(next)]);
     for (const name of names) {
@@ -227,7 +231,7 @@ function applyProps(el, prev, next) {
             continue;
         }
         if (name.startsWith("on") && (typeof before === "function" || typeof after === "function")) {
-            const event = name.slice(2).toLowerCase();
+            const event = domEventName(name);
             if (typeof before === "function")
                 el.removeEventListener(event, before);
             if (typeof after === "function")
